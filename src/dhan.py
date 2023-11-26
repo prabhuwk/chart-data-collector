@@ -8,13 +8,11 @@ logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 
-logging.info("welcome to dhan api")
-
 client_id = os.environ.get("CLIENT_ID")
 access_token = os.environ.get("ACCESS_TOKEN")
 dhan = dhanhq(client_id, access_token)
 
-# place order
+# place order for BANKNIFTY-Nov2023-43700-CE chart identified by security_id 58275
 place_order = dhan.place_order(
     tag="",
     transaction_type=dhan.SELL,
@@ -40,6 +38,9 @@ if place_order["status"] == "failure":
     logging.error(f"Failed to place order {place_order['remarks']['message']}")
 if place_order["status"] == "success":
     logging.info(
-        f"Order placed.\norder_id {place_order['data']['orderId']}"
-        f"order status is {place_order['data']['orderStatus']}"
+        f"order placed with order_id {place_order['data']['orderId']}"
+        f" and order_status is {place_order['data']['orderStatus']}"
     )
+
+# cancel order
+# dhan.cancel_order(order_id)
