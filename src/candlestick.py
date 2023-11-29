@@ -1,10 +1,12 @@
 import logging
 import os
 
+import numpy as np
 import pandas as pd
+import pandas_ta as ta
 from dhanhq import dhanhq
 from dotenv import load_dotenv
-from mplfinance import plot
+from mplfinance import make_addplot, plot
 
 logging.basicConfig(level=logging.INFO)
 
@@ -39,11 +41,72 @@ df_5min = df.resample("5T").agg(
     {"open": "first", "high": "max", "low": "min", "close": "last"}
 )
 
+# Calculating the 20 EMA
+df_5min["20_ema"] = ta.ema(df["close"], length=20)
+
+# Create an additional plot for the 20 EMA
+ema_plot = make_addplot(df_5min["20_ema"], color="yellow", width=1.0)
+
+
+# Function to calculate CPR
+def calculate_cpr(df):
+    df["PP"] = (df["high"].shift(1) + df["low"].shift(1) + df["close"].shift(1)) / 3
+    df["TC"] = (df["high"].shift(1) + df["low"].shift(1)) / 2
+    df["BC"] = (df["TC"] * 2) - df["PP"]
+    # df["R1"] = (2 * df["PP"]) - df["low"].shift(1)
+    # df["S1"] = (2 * df["PP"]) - df["high"].shift(1)
+    # df["R2"] = df["PP"] + (df["high"].shift(1) - df["low"].shift(1))
+    # df["S2"] = df["PP"] - (df["high"].shift(1) - df["low"].shift(1))
+    return df
+
+
+# Applying CPR calculation
+df_5min = calculate_cpr(df_5min)
+
+# Create an additional plot for CPR
+pp_plot = make_addplot(df_5min["PP"], color="gray", width=1.0)
+tc_plot = make_addplot(df_5min["TC"], color="orange", width=1.0)
+bc_plot = make_addplot(df_5min["BC"], color="orange", width=1.0)
+
+
+# Identifying the crossover points for buy and sell Signals
+cross_above = (df_5min["20_ema"] > df_5min["TC"]) & (
+    df_5min["20_ema"].shift(1) <= df_5min["TC"].shift(1)
+)
+cross_below = (df_5min["20_ema"] < df_5min["BC"]) & (
+    df_5min["20_ema"].shift(1) >= df_5min["BC"].shift(1)
+)
+
+
+df_5min["buy"] = np.where(cross_above, df_5min["close"], np.nan)
+df_5min["sell"] = np.where(cross_below, df_5min["close"], np.nan)
+
+
+buy_signal_plot = make_addplot(
+    df_5min["buy"],
+    type="scatter",
+    markersize=200,
+    marker="^",
+    color="green",
+)
+sell_signal_plot = make_addplot(
+    df_5min["sell"],
+    type="scatter",
+    markersize=200,
+    marker="v",
+    color="red",
+)
+
 # Creating a candlestick chart with mplfinance
 plot(
     df_5min,
     type="candle",
+    addplot=[ema_plot, pp_plot, tc_plot, bc_plot, buy_signal_plot, sell_signal_plot],
     style="charles",
     volume=False,
     title="5-Minute Intraday Candlestick Chart",
+    ylabel="Price",
+    xlabel="Time",
+    xrotation=20,
+    show_nontrading=False,
 )
