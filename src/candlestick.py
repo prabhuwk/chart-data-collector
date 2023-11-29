@@ -4,6 +4,7 @@ import os
 import pandas as pd
 from dhanhq import dhanhq
 from dotenv import load_dotenv
+from mplfinance import plot
 
 logging.basicConfig(level=logging.INFO)
 
@@ -37,4 +38,12 @@ df.index = pd.to_datetime(df.converted_date_time)
 df_5min = df.resample("5T").agg(
     {"open": "first", "high": "max", "low": "min", "close": "last"}
 )
-print(df_5min)
+
+# Creating a candlestick chart with mplfinance
+plot(
+    df_5min,
+    type="candle",
+    style="charles",
+    volume=False,
+    title="5-Minute Intraday Candlestick Chart",
+)
