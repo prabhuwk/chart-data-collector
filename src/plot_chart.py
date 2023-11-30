@@ -2,7 +2,7 @@ from mplfinance import make_addplot, plot
 from pandas.core.frame import DataFrame
 
 
-def cpr_ema_candlestick(df: DataFrame):
+def cpr_ema_candlestick(df: DataFrame) -> None:
     # Create an additional plot for the 20 EMA
     ema_plot = make_addplot(df["20_ema"], color="yellow", width=1.0)
 
