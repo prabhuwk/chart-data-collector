@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    container_name: trading-bot
+    ports:
+      - 5678:5678
+    volumes:
+      - ./src:/app/src
+    command: python src/main.py --symbol-name BANKNIFTY --exchange IDX
+    environment:
+      - "DEBUG=${DEBUG}"
+      - "CLIENT_ID=${CLIENT_ID}"
+      - "ACCESS_TOKEN=${ACCESS_TOKEN}"

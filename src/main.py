@@ -11,8 +11,8 @@ from utils import download_file, get_dhan_client
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-if os.environ.get("DEBUG"):
-    debugpy.listen("0.0.0.0", 5678)
+if os.environ.get("DEBUG") == "True":
+    debugpy.listen(("0.0.0.0", 5678))
     debugpy.wait_for_client()
 
 
