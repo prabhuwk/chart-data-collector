@@ -10,6 +10,10 @@ from symbol_info import SymbolInfo
 # from plot_chart import cpr_ema_candlestick
 
 
+class PostTradingHoursError(Exception):
+    """After Trading Hours Error"""
+
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -38,6 +42,10 @@ def previous_day_data(chart_data: ChartData, symbol_name: str) -> DataFrame:
     minute_chart = chart_data.historical(
         symbol=symbol_name, from_date=yesterday_date, to_date=today_date
     )
+    if minute_chart["status"] == "failure":
+        raise PostTradingHoursError(
+            "can not get any data from dhan post trading hours."
+        )
     df = pd.DataFrame(data=minute_chart["data"])
     return convert_to_date_time(df=df)
 

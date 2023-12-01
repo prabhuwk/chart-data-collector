@@ -5,3 +5,5 @@ pandas-ta==0.3.14b0
 click>=8.1.7
 requests==2.31.0
 mplfinance==0.12.10b0
+schedule==1.2.1
+debugpy==1.8.0

@@ -5,9 +5,11 @@ pandas-ta==0.3.14b0
 click>=8.1.7
 requests==2.31.0
 mplfinance==0.12.10b0
+schedule==1.2.1
 pre-commit==3.5.0
 black==23.11.0
 ruff==0.1.6
 pytest==7.4.3
 pytest-cov==4.1.0
 pytest-mock==3.12.0
+debugpy==1.8.0
