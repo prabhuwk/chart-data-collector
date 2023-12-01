@@ -6,8 +6,6 @@ import pandas as pd
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-TRADING_SYMBOLS_FILE = "downloads/api-scrip-master.csv"
-
 
 class SymbolNotFoundError(Exception):
     """symbol not found error"""
@@ -18,7 +16,8 @@ class SemSegment(Enum):
 
 
 class SymbolInfo:
-    def __init__(self, name: str, exchange: str) -> None:
+    def __init__(self, trade_symbols_file: str, name: str, exchange: str) -> None:
+        self.file = trade_symbols_file
         self.name = name
         self.exchange = exchange
         self.segment = self._segment()
@@ -28,7 +27,7 @@ class SymbolInfo:
         return SemSegment[self.exchange].value
 
     def _security_id(self) -> int:
-        df = pd.read_csv(TRADING_SYMBOLS_FILE)
+        df = pd.read_csv(self.file)
         match = df[
             (df["SEM_TRADING_SYMBOL"] == self.name)
             & (df[" SEM_SEGMENT"] == self.segment)

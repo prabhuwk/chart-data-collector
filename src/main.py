@@ -22,7 +22,7 @@ def main(trade_symbols_file: str, symbol_name: str, exchange: str):
     if not Path(trade_symbols_file).exists():
         download_file(trade_symbols_file)
     dhan_client = get_dhan_client()
-    process_data(dhan_client, symbol_name, exchange)
+    process_data(dhan_client, symbol_name, exchange, trade_symbols_file)
 
 
 if __name__ == "__main__":
