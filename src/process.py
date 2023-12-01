@@ -5,8 +5,10 @@ import pandas as pd
 from chart_data import ChartData
 from indicators import calculate_cpr, calculate_ema
 from pandas.core.frame import DataFrame
-from plot_chart import cpr_ema_candlestick
 from symbol_info import SymbolInfo
+
+# from plot_chart import cpr_ema_candlestick
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -63,4 +65,4 @@ def process_data(dhan_client, symbol_name: str, exchange: str, trade_symbols_fil
         }
     )
     df_5min = calculate_cpr(yesterday_df, df_5min)
-    cpr_ema_candlestick(df_5min)
+    # cpr_ema_candlestick(df_5min)
