@@ -39,7 +39,7 @@ def previous_day_data(dhan_client, chart_data: ChartData, symbol_name: str):
 
 
 def intraday_data(dhan_client, chart_data: ChartData, security_id: str):
-    minute_chart = chart_data.intraday(security_id=security_id)
+    minute_chart = chart_data.intraday(security_id=f"{security_id}")
     df = pd.DataFrame(data=minute_chart["data"])
     return convert_to_date_time(dhan_client=dhan_client, df=df)
 
@@ -48,7 +48,6 @@ def process_data(dhan_client, symbol_name: str, exchange: str):
     symbol_info = SymbolInfo(name=symbol_name, exchange=exchange)
     chart_data = ChartData(dhan_client=dhan_client)
     yesterday_df = previous_day_data(dhan_client, chart_data, symbol_info.name)
-    yesterday_df = calculate_cpr(yesterday_df)
     intraday_df = intraday_data(dhan_client, chart_data, symbol_info.security_id)
     intraday_df = calculate_ema(intraday_df)
     df_5min = intraday_df.resample("5T").agg(
@@ -60,4 +59,5 @@ def process_data(dhan_client, symbol_name: str, exchange: str):
             "20_ema": "mean",
         }
     )
+    df_5min = calculate_cpr(yesterday_df, df_5min)
     cpr_ema_candlestick(df_5min)
