@@ -1,4 +1,4 @@
-class ChartData:
+class DhanCandlestickData:
     def __init__(self, dhan_client) -> None:
         self._dhan_client = dhan_client
         self._instrument_type = "INDEX"
