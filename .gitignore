@@ -5,3 +5,4 @@ venv/
 scratch/
 __pycache__/
 downloads/
+uploads/

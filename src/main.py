@@ -4,7 +4,8 @@ from pathlib import Path
 
 import click
 import debugpy
-import schedule
+
+# import schedule
 from process import process_data
 from utils import download_file, get_dhan_client
 
@@ -25,15 +26,31 @@ if os.environ.get("DEBUG") == "True":
 )
 @click.option("--symbol-name", required=True, help="name of symbol")
 @click.option("--exchange", required=True, help="name of exchange")
-def main(trade_symbols_file: str, symbol_name: str, exchange: str):
+@click.option(
+    "--uploads-directory",
+    type=click.Path(),
+    default="uploads",
+    help="uploads directory path",
+)
+@click.option("--environment", default="development", help="name of the environment")
+def main(
+    trade_symbols_file: str,
+    symbol_name: str,
+    exchange: str,
+    uploads_directory: str,
+    environment: str,
+):
+    Path(uploads_directory).mkdir(parents=True, exist_ok=True)
     if not Path(trade_symbols_file).exists():
         download_file(trade_symbols_file)
-    dhan_client = get_dhan_client()
-    schedule.every(5).minutes.do(
-        process_data(dhan_client, symbol_name, exchange, trade_symbols_file)
+    dhan_client = get_dhan_client(environment=environment)
+    # schedule.every(5).minutes.do(
+    process_data(
+        dhan_client, symbol_name, exchange, trade_symbols_file, uploads_directory
     )
-    while True:
-        schedule.run_pending()
+    # )
+    # while True:
+    #     schedule.run_pending()
 
 
 if __name__ == "__main__":

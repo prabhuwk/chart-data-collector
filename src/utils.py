@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 
 import requests
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 from dhanhq import dhanhq
 from dotenv import load_dotenv
 
@@ -34,12 +36,19 @@ def download_file(trade_symbols_file) -> None:
     raise DownloadFailedError(message)
 
 
-def get_dhan_client():
-    load_dotenv()
-    if "CLIENT_ID" not in os.environ and "ACCESS_TOKEN" not in os.environ:
-        raise ClientIdAccessTokenNotFoundError(
-            "please set CLIENT_ID and ACCESS_TOKEN for authentication with Dhan account"
-        )
-    client_id = os.environ.get("CLIENT_ID")
-    access_token = os.environ.get("ACCESS_TOKEN")
+def get_dhan_client(environment: str):
+    if environment == "development":
+        load_dotenv()
+        if "DHAN_CLIENT_ID" not in os.environ and "DHAN_ACCESS_TOKEN" not in os.environ:
+            raise ClientIdAccessTokenNotFoundError(
+                "Please set DHAN_CLIENT_ID and DHAN_ACCESS_TOKEN for authentication."
+            )
+        client_id = os.environ.get("DHAN_CLIENT_ID")
+        access_token = os.environ.get("DHAN_ACCESS_TOKEN")
+        return dhanhq(client_id, access_token)
+    credential = DefaultAzureCredential()
+    keyvault_url = os.environ.get("KEYVAULT_URL")
+    secret_client = SecretClient(vault_url=keyvault_url, credential=credential)
+    client_id = secret_client.get_secret("DHAN-CLIENT-ID").value
+    access_token = secret_client.get_secret("DHAN-ACCESS-TOKEN").value
     return dhanhq(client_id, access_token)

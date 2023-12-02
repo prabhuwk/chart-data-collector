@@ -5,9 +5,8 @@ import pandas as pd
 from chart_data import ChartData
 from indicators import calculate_cpr, calculate_ema
 from pandas.core.frame import DataFrame
+from plot_chart import cpr_ema_candlestick
 from symbol_info import SymbolInfo
-
-# from plot_chart import cpr_ema_candlestick
 
 
 class PostTradingHoursError(Exception):
@@ -57,7 +56,13 @@ def intraday_data(chart_data: ChartData, security_id: str) -> DataFrame:
     return convert_to_date_time(df=df)
 
 
-def process_data(dhan_client, symbol_name: str, exchange: str, trade_symbols_file: str):
+def process_data(
+    dhan_client,
+    symbol_name: str,
+    exchange: str,
+    trade_symbols_file: str,
+    uploads_directory: str,
+):
     symbol_info = SymbolInfo(trade_symbols_file, name=symbol_name, exchange=exchange)
     chart_data = ChartData(dhan_client=dhan_client)
     yesterday_df = previous_day_data(chart_data, symbol_info.name)
@@ -73,4 +78,4 @@ def process_data(dhan_client, symbol_name: str, exchange: str, trade_symbols_fil
         }
     )
     df_5min = calculate_cpr(yesterday_df, df_5min)
-    # cpr_ema_candlestick(df_5min)
+    cpr_ema_candlestick(df_5min, uploads_directory)
