@@ -88,7 +88,7 @@ def process_data(
     df_5min_data_file_path = f"{uploads_directory}/{df_5min_data_file_name}"
     df_5min.to_csv(df_5min_data_file_path)
 
-    if not environment == "development":
+    if environment == "production":
         upload_file_to_blob(
             blob_name=candlestick_chart_file_path,
             file_path=candlestick_chart_file_path,
