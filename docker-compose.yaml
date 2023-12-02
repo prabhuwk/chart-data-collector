@@ -6,7 +6,7 @@ services:
       - 5678:5678
     volumes:
       - ./src:/app/src
-    command: python src/main.py --symbol-name BANKNIFTY --exchange IDX
+    command: python src/main.py --symbol-name BANKNIFTY --exchange IDX --environment development
     environment:
       - "DEBUG=${DEBUG}"
       - "CLIENT_ID=${CLIENT_ID}"

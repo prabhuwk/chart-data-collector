@@ -11,7 +11,8 @@
             "program": "src/main.py",
             "args": [
                 "--symbol-name", "BANKNIFTY",
-                "--exchange", "IDX"
+                "--exchange", "IDX",
+                "--environment", "development"
             ],
             "console": "integratedTerminal",
             "justMyCode": true

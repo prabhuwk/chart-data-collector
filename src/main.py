@@ -32,7 +32,12 @@ if os.environ.get("DEBUG") == "True":
     default="uploads",
     help="uploads directory path",
 )
-@click.option("--environment", default="development", help="name of the environment")
+@click.option(
+    "--environment",
+    type=click.Choice(["development", "production"]),
+    required=True,
+    help="name of the environment",
+)
 def main(
     trade_symbols_file: str,
     symbol_name: str,
