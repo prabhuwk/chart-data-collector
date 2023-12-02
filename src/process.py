@@ -11,7 +11,7 @@ from utils import upload_file_to_blob
 
 
 class PostTradingHoursError(Exception):
-    """After Trading Hours Error"""
+    """Post Trading Hours Error"""
 
 
 logging.basicConfig(level=logging.INFO)
