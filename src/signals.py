@@ -63,27 +63,27 @@ def calculate_sell_signal(df: DataFrame, treshold: int = 40) -> bool:
     body_70_percent_below_r3 = body_70_percent < df["r3"]
     body_70_percent_below_r4 = body_70_percent < df["r4"]
 
-    near_close_bc = -treshold < abs(df["close"] - df["bc"]) < treshold
-    near_close_s1 = -treshold < abs(df["close"] - df["s1"]) < treshold
-    near_close_s2 = -treshold < abs(df["close"] - df["s2"]) < treshold
-    near_close_s3 = -treshold < abs(df["close"] - df["s3"]) < treshold
-    near_close_r1 = -treshold < abs(df["close"] - df["r1"]) < treshold
-    near_close_r2 = -treshold < abs(df["close"] - df["r2"]) < treshold
-    near_close_r3 = -treshold < abs(df["close"] - df["r3"]) < treshold
-    near_close_r4 = -treshold < abs(df["close"] - df["r4"]) < treshold
+    near_open_bc = -treshold < abs(df["open"] - df["bc"]) < treshold
+    near_open_s1 = -treshold < abs(df["open"] - df["s1"]) < treshold
+    near_open_s2 = -treshold < abs(df["open"] - df["s2"]) < treshold
+    near_open_s3 = -treshold < abs(df["open"] - df["s3"]) < treshold
+    near_open_r1 = -treshold < abs(df["open"] - df["r1"]) < treshold
+    near_open_r2 = -treshold < abs(df["open"] - df["r2"]) < treshold
+    near_open_r3 = -treshold < abs(df["open"] - df["r3"]) < treshold
+    near_open_r4 = -treshold < abs(df["open"] - df["r4"]) < treshold
 
     return (
         red_candle
         and below_ema
         and (
-            (near_close_bc and body_70_percent_below_bc)
-            or (near_close_s1 and body_70_percent_below_s1)
-            or (near_close_s2 and body_70_percent_below_s2)
-            or (near_close_s3 and body_70_percent_below_s3)
-            or (near_close_r1 and body_70_percent_below_r1)
-            or (near_close_r2 and body_70_percent_below_r2)
-            or (near_close_r3 and body_70_percent_below_r3)
-            or (near_close_r4 and body_70_percent_below_r4)
+            (near_open_bc and body_70_percent_below_bc)
+            or (near_open_s1 and body_70_percent_below_s1)
+            or (near_open_s2 and body_70_percent_below_s2)
+            or (near_open_s3 and body_70_percent_below_s3)
+            or (near_open_r1 and body_70_percent_below_r1)
+            or (near_open_r2 and body_70_percent_below_r2)
+            or (near_open_r3 and body_70_percent_below_r3)
+            or (near_open_r4 and body_70_percent_below_r4)
         )
     )
 
