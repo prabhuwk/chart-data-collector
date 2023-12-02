@@ -9,5 +9,5 @@ services:
     command: python src/main.py --symbol-name BANKNIFTY --exchange IDX --environment development
     environment:
       - "DEBUG=${DEBUG}"
-      - "CLIENT_ID=${CLIENT_ID}"
-      - "ACCESS_TOKEN=${ACCESS_TOKEN}"
+      - "DHAN_CLIENT_ID=${DHAN_CLIENT_ID}"
+      - "DHAN_ACCESS_TOKEN=${DHAN_ACCESS_TOKEN}"
