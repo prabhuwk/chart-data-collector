@@ -6,6 +6,7 @@ from dhan_candlestick_data import DhanCandlestickData
 from indicators import calculate_cpr, calculate_ema
 from pandas.core.frame import DataFrame
 from plot_chart import cpr_ema_candlestick
+from signals import generate_buy_signal, generate_sell_signal
 from symbol_info import SymbolInfo
 from utils import upload_file_to_blob
 
@@ -80,6 +81,10 @@ def process_data(
         }
     )
     df_5min = calculate_cpr(yesterday_df, df_5min)
+
+    df_5min = generate_buy_signal(df_5min)
+    df_5min = generate_sell_signal(df_5min)
+
     candlestick_chart_file_name = f"canldestick-chart-{datetime.today().date()}.png"
     candlestick_chart_file_path = f"{uploads_directory}/{candlestick_chart_file_name}"
     cpr_ema_candlestick(df_5min, candlestick_chart_file_path)
