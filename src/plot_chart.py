@@ -1,10 +1,8 @@
-from datetime import datetime
-
 from mplfinance import make_addplot, plot
 from pandas.core.frame import DataFrame
 
 
-def cpr_ema_candlestick(df: DataFrame, uploads_directory: str) -> None:
+def cpr_ema_candlestick(df: DataFrame, candlestick_chart_file_path: str) -> None:
     ema_plot = make_addplot(df["20_ema"], color="yellow", width=1.0)
 
     pp_plot = make_addplot(df["pp"], color="blue", width=1.0)
@@ -43,5 +41,5 @@ def cpr_ema_candlestick(df: DataFrame, uploads_directory: str) -> None:
         xlabel="Time",
         xrotation=20,
         show_nontrading=False,
-        savefig=f"{uploads_directory}/{datetime.today().date()}.png",
+        savefig=candlestick_chart_file_path,
     )

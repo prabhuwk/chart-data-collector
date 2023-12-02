@@ -7,6 +7,7 @@ from indicators import calculate_cpr, calculate_ema
 from pandas.core.frame import DataFrame
 from plot_chart import cpr_ema_candlestick
 from symbol_info import SymbolInfo
+from utils import upload_file_to_blob
 
 
 class PostTradingHoursError(Exception):
@@ -62,6 +63,7 @@ def process_data(
     exchange: str,
     trade_symbols_file: str,
     uploads_directory: str,
+    environment: str,
 ):
     symbol_info = SymbolInfo(trade_symbols_file, name=symbol_name, exchange=exchange)
     chart_data = ChartData(dhan_client=dhan_client)
@@ -78,4 +80,20 @@ def process_data(
         }
     )
     df_5min = calculate_cpr(yesterday_df, df_5min)
-    cpr_ema_candlestick(df_5min, uploads_directory)
+    candlestick_chart_file_name = f"canldestick-chart-{datetime.today().date()}.png"
+    candlestick_chart_file_path = f"{uploads_directory}/{candlestick_chart_file_name}"
+    cpr_ema_candlestick(df_5min, candlestick_chart_file_path)
+
+    df_5min_data_file_name = f"canldestick-data-{datetime.today().date()}.csv"
+    df_5min_data_file_path = f"{uploads_directory}/{df_5min_data_file_name}"
+    df_5min.to_csv(df_5min_data_file_path)
+
+    if not environment == "development":
+        upload_file_to_blob(
+            blob_name=candlestick_chart_file_path,
+            file_path=candlestick_chart_file_path,
+        )
+        upload_file_to_blob(
+            blob_name=df_5min_data_file_path,
+            file_path=df_5min_data_file_path,
+        )

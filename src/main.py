@@ -51,7 +51,12 @@ def main(
     dhan_client = get_dhan_client(environment=environment)
     # schedule.every(5).minutes.do(
     process_data(
-        dhan_client, symbol_name, exchange, trade_symbols_file, uploads_directory
+        dhan_client,
+        symbol_name,
+        exchange,
+        trade_symbols_file,
+        uploads_directory,
+        environment,
     )
     # )
     # while True:
