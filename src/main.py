@@ -61,7 +61,7 @@ def main(
         time.sleep(300)
 
 
-every().day.at("06:36").do(main)
+every().day.at("06:50").do(main)
 
 
 if __name__ == "__main__":
