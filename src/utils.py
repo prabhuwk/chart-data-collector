@@ -52,7 +52,7 @@ def upload_file_to_blob(blob_name: str, file_path: str):
     )
     container_client = blob_service_client.get_container_client(storage_container_name)
     with open(file_path, "rb") as data:
-        container_client.upload_blob(name=blob_name, data=data)
+        container_client.upload_blob(name=blob_name, data=data, overwrite=True)
     logging.info(f"uploaded file {file_path} successfuly to storage account.")
 
 
