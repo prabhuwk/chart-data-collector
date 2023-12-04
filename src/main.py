@@ -6,7 +6,8 @@ from pathlib import Path
 import click
 import debugpy
 from process import process_data
-from schedule import every, run_pending
+
+# from schedule import every, run_pending
 from utils import download_file, get_dhan_client
 
 logging.basicConfig(level=logging.INFO)
@@ -61,10 +62,11 @@ def main(
         time.sleep(300)
 
 
-every().day.at("06:50").do(main)
+# every().day.at("06:50").do(main)
 
 
 if __name__ == "__main__":
-    while True:
-        run_pending()
-        time.sleep(1)
+    main()
+    # while True:
+    #     run_pending()
+    #     time.sleep(1)
