@@ -1,13 +1,12 @@
 import logging
 import os
 import time
+from datetime import datetime
 from pathlib import Path
 
 import click
 import debugpy
 from process import process_data
-
-# from schedule import every, run_pending
 from utils import download_file, get_dhan_client
 
 logging.basicConfig(level=logging.INFO)
@@ -51,22 +50,19 @@ def main(
         download_file(trade_symbols_file)
     dhan_client = get_dhan_client(environment=environment)
     while True:
-        process_data(
-            dhan_client,
-            symbol_name,
-            exchange,
-            trade_symbols_file,
-            uploads_directory,
-            environment,
-        )
-        time.sleep(300)
-
-
-# every().day.at("06:50").do(main)
+        current_minute = datetime.now().minute % 5
+        if current_minute == 0:
+            process_data(
+                dhan_client,
+                symbol_name,
+                exchange,
+                trade_symbols_file,
+                uploads_directory,
+                environment,
+            )
+        else:
+            time.sleep((5 - current_minute) * 60)
 
 
 if __name__ == "__main__":
     main()
-    # while True:
-    #     run_pending()
-    #     time.sleep(1)

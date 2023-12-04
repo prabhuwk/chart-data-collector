@@ -1,5 +1,6 @@
 import logging
 import os
+from functools import lru_cache
 from pathlib import Path
 
 import requests
@@ -43,10 +44,19 @@ def get_keyvault_secret_client():
     return SecretClient(vault_url=keyvault_url, credential=credential)
 
 
-def upload_file_to_blob(blob_name: str, file_path: str):
+@lru_cache
+def get_storage_account_url_and_container():
     secret_client = get_keyvault_secret_client()
     storage_account_url = secret_client.get_secret("STORAGE-ACCOUNT-URL").value
     storage_container_name = secret_client.get_secret("STORAGE-CONTAINER-NAME").value
+    return storage_account_url, storage_container_name
+
+
+def upload_file_to_blob(blob_name: str, file_path: str):
+    (
+        storage_account_url,
+        storage_container_name,
+    ) = get_storage_account_url_and_container()
     blob_service_client = BlobServiceClient(
         account_url=storage_account_url, credential=DefaultAzureCredential()
     )
