@@ -5,7 +5,8 @@ import pandas as pd
 from dhan_candlestick_data import DhanCandlestickData
 from indicators import calculate_cpr, calculate_ema
 from pandas.core.frame import DataFrame
-from plot_chart import cpr_ema_candlestick
+
+# from plot_chart import cpr_ema_candlestick
 from signals import generate_buy_signal, generate_sell_signal
 from symbol_info import SymbolInfo
 from utils import upload_file_to_blob
@@ -89,19 +90,19 @@ def process_data(
     df_5min = generate_buy_signal(df_5min)
     df_5min = generate_sell_signal(df_5min)
 
-    candlestick_chart_file_name = f"canldestick-chart-{datetime.today().date()}.png"
-    candlestick_chart_file_path = f"{uploads_directory}/{candlestick_chart_file_name}"
-    cpr_ema_candlestick(df_5min, candlestick_chart_file_path)
+    # candlestick_chart_file_name = f"canldestick-chart-{datetime.today().date()}.png"
+    # candlestick_chart_file_path = f"{uploads_directory}/{candlestick_chart_file_name}"
+    # cpr_ema_candlestick(df_5min, candlestick_chart_file_path)
 
     df_5min_data_file_name = f"canldestick-data-{datetime.today().date()}.csv"
     df_5min_data_file_path = f"{uploads_directory}/{df_5min_data_file_name}"
     df_5min.to_csv(df_5min_data_file_path)
 
     if environment == "production":
-        upload_file_to_blob(
-            blob_name=candlestick_chart_file_path,
-            file_path=candlestick_chart_file_path,
-        )
+        # upload_file_to_blob(
+        #     blob_name=candlestick_chart_file_path,
+        #     file_path=candlestick_chart_file_path,
+        # )
         upload_file_to_blob(
             blob_name=df_5min_data_file_path,
             file_path=df_5min_data_file_path,
