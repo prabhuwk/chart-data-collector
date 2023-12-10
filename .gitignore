@@ -7,3 +7,4 @@ __pycache__/
 download/
 upload/
 .DS_Store
+redis_data/
