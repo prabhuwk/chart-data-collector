@@ -6,8 +6,11 @@ from pathlib import Path
 
 import click
 import debugpy
-from process import process_data
-from utils import download_file, get_dhan_client
+from dhan_candlestick_data import DhanCandlestickData, previous_day_data
+from indicators import calculate_cpr
+from process import process_intraday_data
+from symbol_info import SymbolInfo
+from utils import get_dhan_client
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,50 +21,47 @@ if os.environ.get("DEBUG") == "True":
 
 
 @click.command()
-@click.option(
-    "--trade-symbols-file",
-    type=click.Path(),
-    default="downloads/api-scrip-master.csv",
-    help="trade symbols file",
-)
 @click.option("--symbol-name", required=True, help="name of symbol")
 @click.option("--exchange", required=True, help="name of exchange")
 @click.option(
-    "--uploads-directory",
-    type=click.Path(),
-    default="uploads",
-    help="uploads directory path",
+    "--environment", type=click.Choice(["development", "production"]), required=True
 )
-@click.option(
-    "--environment",
-    type=click.Choice(["development", "production"]),
-    required=True,
-    help="name of the environment",
-)
+@click.option("--download-directory", type=click.Path(), default="/download")
+@click.option("--upload-directory", type=click.Path(), default="/upload")
+@click.option("--candlestick-interval", default=5, help="candlestick interval")
+@click.option("--trade-symbols-file-name", default="api-scrip-master.csv")
 def main(
-    trade_symbols_file: str,
+    download_directory: str,
+    trade_symbols_file_name: str,
     symbol_name: str,
     exchange: str,
-    uploads_directory: str,
+    upload_directory: str,
     environment: str,
+    candlestick_interval: int,
 ):
-    Path(uploads_directory).mkdir(parents=True, exist_ok=True)
-    if not Path(trade_symbols_file).exists():
-        download_file(trade_symbols_file)
+    Path(download_directory).mkdir(parents=True, exist_ok=True)
+    trade_symbols_file = f"{download_directory}/{symbol_name}-{trade_symbols_file_name}"
+    Path(upload_directory).mkdir(parents=True, exist_ok=True)
     dhan_client = get_dhan_client(environment=environment)
+    symbol_info = SymbolInfo(trade_symbols_file, name=symbol_name, exchange=exchange)
+    dhan_candlestick_data = DhanCandlestickData(dhan_client=dhan_client)
+    yesterday_data = previous_day_data(dhan_candlestick_data, symbol_name)
+    cpr_data = calculate_cpr(
+        yesterday_data["high"], yesterday_data["low"], yesterday_data["close"]
+    )
     while True:
-        current_minute = datetime.now().minute % 5
+        current_minute = datetime.now().minute % candlestick_interval
         if current_minute == 0:
-            process_data(
-                dhan_client,
+            process_intraday_data(
+                dhan_candlestick_data,
                 symbol_name,
-                exchange,
-                trade_symbols_file,
-                uploads_directory,
-                environment,
+                upload_directory,
+                candlestick_interval,
+                symbol_info.security_id,
+                cpr_data,
             )
         else:
-            time.sleep((5 - current_minute) * 60)
+            time.sleep((candlestick_interval - current_minute) * 60)
 
 
 if __name__ == "__main__":

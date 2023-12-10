@@ -2,7 +2,7 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.codeActionsOnSave": {
-            "source.organizeImports.ruff": true
+            "source.organizeImports.ruff": "explicit"
         },
         "editor.formatOnSave": true
     }

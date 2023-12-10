@@ -10,9 +10,12 @@
             "request": "launch",
             "program": "src/main.py",
             "args": [
+                "--download-directory", "download",
+                "--upload-directory", "upload",
                 "--symbol-name", "BANKNIFTY",
                 "--exchange", "IDX",
-                "--environment", "development"
+                "--environment", "development",
+                "--candlestick-interval", "5",
             ],
             "console": "integratedTerminal",
             "justMyCode": true
