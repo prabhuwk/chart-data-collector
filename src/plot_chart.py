@@ -5,7 +5,7 @@ from pandas.core.frame import DataFrame
 def cpr_ema_candlestick(df: DataFrame, candlestick_chart_file_path: str) -> None:
     ema_plot = make_addplot(df["20_ema"], color="yellow", width=1.0)
 
-    pp_plot = make_addplot(df["pp"], color="blue", width=1.0)
+    pp_plot = make_addplot(df["pivot"], color="blue", width=1.0)
     tc_plot = make_addplot(df["tc"], color="red", width=1.0)
     bc_plot = make_addplot(df["bc"], color="green", width=1.0)
     r1_plot = make_addplot(df["r1"], color="red", width=1.0)

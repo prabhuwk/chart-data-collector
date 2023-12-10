@@ -5,8 +5,7 @@ import pandas as pd
 from dhan_candlestick_data import DhanCandlestickData
 from indicators import calculate_ema
 from pandas.core.frame import DataFrame
-
-# from plot_chart import cpr_ema_candlestick
+from plot_chart import cpr_ema_candlestick
 from signals import generate_buy_signal, generate_sell_signal
 
 logging.basicConfig(level=logging.INFO)
@@ -62,9 +61,11 @@ def process_intraday_data(
     df_5min = generate_buy_signal(df_5min)
     df_5min = generate_sell_signal(df_5min)
 
-    # candlestick_chart_file_name = f"canldestick-chart-{datetime.today().date()}.png"
-    # candlestick_chart_file_path = f"{upload_directory}/{candlestick_chart_file_name}"
-    # cpr_ema_candlestick(df_5min, candlestick_chart_file_path)
+    candlestick_chart_file_name = (
+        f"{symbol_name.lower()}-canldestick-chart-{datetime.today().date()}.png"
+    )
+    candlestick_chart_file_path = f"{upload_directory}/{candlestick_chart_file_name}"
+    cpr_ema_candlestick(df_5min, candlestick_chart_file_path)
 
     df_5min_data_file_name = (
         f"{symbol_name.lower()}-canldestick-data-{datetime.today().date()}.csv"
