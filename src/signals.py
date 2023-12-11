@@ -39,7 +39,7 @@ def generate_buy_signal(df: DataFrame) -> DataFrame:
 
 def calculate_sell_signal(df: DataFrame) -> bool:
     levels = ["r4", "r3", "r2", "r1", "tc", "bc", "s1", "s2", "s3", "s4"]
-    support, resistance = find_support_resistance(levels, df, df["open"])
+    support, resistance = find_support_resistance(levels, df)
     if support == df["tc"] and resistance == df["bc"]:
         return False
     if not (support and resistance):

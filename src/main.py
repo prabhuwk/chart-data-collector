@@ -12,7 +12,11 @@ from process import process_intraday_data
 from symbol_info import SymbolInfo
 from utils import get_dhan_client
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(filename)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 if os.environ.get("DEBUG") == "True":
@@ -47,11 +51,12 @@ def main(
     dhan_candlestick_data = DhanCandlestickData(dhan_client=dhan_client)
     yesterday_data = previous_day_data(dhan_candlestick_data, symbol_name)
     cpr_data = calculate_cpr(
-        yesterday_data["high"], yesterday_data["low"], yesterday_data["close"]
+        yesterday_data["high"][0], yesterday_data["low"][0], yesterday_data["close"][0]
     )
     while True:
         current_minute = datetime.now().minute % candlestick_interval
         if current_minute == 0:
+            current_seconds = datetime.now().second
             process_intraday_data(
                 dhan_candlestick_data,
                 symbol_name,
@@ -60,6 +65,7 @@ def main(
                 symbol_info.security_id,
                 cpr_data,
             )
+            time.sleep(60 - current_seconds)
         else:
             time.sleep((candlestick_interval - current_minute) * 60)
 
