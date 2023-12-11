@@ -1,17 +1,9 @@
-import logging
 import os
 
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from dhanhq import dhanhq
 from dotenv import load_dotenv
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(filename)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
 
 
 class ClientIdAccessTokenNotFoundError(Exception):
