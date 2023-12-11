@@ -4,9 +4,7 @@
 ![trading bot](design/trading_bot.png)
 
 ## Container Instances
-|![container instances](design/container_instances.png)|
-|:--:|
-
+![container instances](design/container_instances.png)
 
 # For development
 
