@@ -1,5 +1,7 @@
+import json
 import os
 
+import redis
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from dhanhq import dhanhq
@@ -30,3 +32,15 @@ def get_dhan_client(environment: str):
     client_id = secret_client.get_secret("DHAN-CLIENT-ID").value
     access_token = secret_client.get_secret("DHAN-ACCESS-TOKEN").value
     return dhanhq(client_id, access_token)
+
+
+def get_redis_client():
+    host = os.environ.get("REDIS_HOST")
+    port = os.environ.get("REDIS_PORT")
+    db = 0
+    return redis.Redis(host=host, port=port, db=db)
+
+
+def push_to_redis_queue(channel: str, data: json):
+    redis_client = get_redis_client()
+    redis_client.rpush(channel, data)

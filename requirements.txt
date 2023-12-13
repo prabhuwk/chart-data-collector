@@ -7,3 +7,4 @@ mplfinance==0.12.10b0
 debugpy==1.8.0
 azure-identity==1.15.0
 azure-keyvault-secrets==4.7.0
+redis==5.0.1

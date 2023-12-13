@@ -1,4 +1,5 @@
 from pandas.core.frame import DataFrame
+from utils import push_to_redis_queue
 
 
 def support_resistance_green_candle(levels: list, df: DataFrame):
@@ -38,7 +39,10 @@ def calculate_buy_signal(df: DataFrame) -> bool:
 
     near_open = -treshold < abs(df["open"] - support) < treshold
 
-    return green_candle and above_ema and near_open and body_70_percent_above
+    if green_candle and above_ema and near_open and body_70_percent_above:
+        push_to_redis_queue("BUY", df.to_json())
+        return True
+    return False
 
 
 def generate_buy_signal(df: DataFrame) -> DataFrame:
@@ -65,7 +69,10 @@ def calculate_sell_signal(df: DataFrame) -> bool:
 
     near_close = -treshold < abs(df["close"] - resistance) < treshold
 
-    return red_candle and below_ema and near_close and body_70_percent_below
+    if red_candle and below_ema and near_close and body_70_percent_below:
+        push_to_redis_queue("SELL", df.to_dict())
+        return True
+    return False
 
 
 def generate_sell_signal(df: DataFrame) -> DataFrame:
