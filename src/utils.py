@@ -36,7 +36,7 @@ def get_dhan_client(environment: str):
 
 def get_redis_client():
     host = os.environ.get("REDIS_HOST")
-    port = str(os.environ.get("REDIS_PORT"))
+    port = os.environ.get("REDIS_PORT")
     db = 0
     return redis.Redis(host=host, port=port, db=db)
 
