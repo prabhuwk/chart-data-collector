@@ -70,7 +70,7 @@ def calculate_sell_signal(df: DataFrame) -> bool:
     near_close = -treshold < abs(df["close"] - resistance) < treshold
 
     if red_candle and below_ema and near_close and body_70_percent_below:
-        push_to_redis_queue("SELL", df.to_dict())
+        push_to_redis_queue("SELL", df.to_json())
         return True
     return False
 
