@@ -23,6 +23,8 @@ def resistance_support_red_candle(levels: list, df: DataFrame):
 def calculate_buy_signal(df: DataFrame) -> bool:
     levels = ["s4", "s3", "s2", "s1", "bc", "tc", "r1", "r2", "r3", "r4"]
     support, resistance = support_resistance_green_candle(levels, df)
+    if df["high"] > support + ((resistance - support) / 2):
+        return False
     if support == df["bc"] and resistance == df["tc"]:
         return False
     if not (support and resistance):
@@ -53,6 +55,8 @@ def generate_buy_signal(df: DataFrame) -> DataFrame:
 def calculate_sell_signal(df: DataFrame) -> bool:
     levels = ["r4", "r3", "r2", "r1", "tc", "bc", "s1", "s2", "s3", "s4"]
     resistance, support = resistance_support_red_candle(levels, df)
+    if df["low"] > resistance - ((resistance - support) / 2):
+        return False
     if support == df["bc"] and resistance == df["tc"]:
         return False
     if not (support and resistance):
