@@ -55,7 +55,7 @@ def generate_buy_signal(df: DataFrame) -> DataFrame:
 def calculate_sell_signal(df: DataFrame) -> bool:
     levels = ["r4", "r3", "r2", "r1", "tc", "bc", "s1", "s2", "s3", "s4"]
     resistance, support = resistance_support_red_candle(levels, df)
-    if df["low"] > resistance - ((resistance - support) / 2):
+    if df["low"] < resistance - ((resistance - support) / 2):
         return False
     if support == df["bc"] and resistance == df["tc"]:
         return False
@@ -71,9 +71,9 @@ def calculate_sell_signal(df: DataFrame) -> bool:
 
     body_70_percent_below = body_70_percent < resistance
 
-    near_close = -treshold < abs(df["close"] - resistance) < treshold
+    near_open = -treshold < abs(df["open"] - resistance) < treshold
 
-    if red_candle and below_ema and near_close and body_70_percent_below:
+    if red_candle and below_ema and near_open and body_70_percent_below:
         push_to_redis_queue("SELL", df.to_json())
         return True
     return False
