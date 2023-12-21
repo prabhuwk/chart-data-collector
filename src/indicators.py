@@ -5,7 +5,7 @@ from pandas.core.frame import DataFrame
 def calculate_cpr(high: float, low: float, close: float) -> dict:
     pivot = (high + low + close) / 3
     bc = (high + low) / 2
-    tc = (pivot * 2) - bc
+    tc = (pivot - bc) + pivot
     r1 = pivot * 2 - low
     s1 = pivot * 2 - high
     r2 = pivot + (high - low)

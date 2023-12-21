@@ -21,9 +21,11 @@ def resistance_support_red_candle(levels: list, df: DataFrame):
 
 
 def calculate_buy_signal(df: DataFrame) -> bool:
-    levels = ["s4", "s3", "s2", "s1", "bc", "tc", "r1", "r2", "r3", "r4"]
+    levels = ["s4", "s3", "s2", "s1", "tc", "bc", "r1", "r2", "r3", "r4"]
     support, resistance = support_resistance_green_candle(levels, df)
     if df["high"] > support + ((resistance - support) / 4):
+        return False
+    if df["close"] > df["tc"] and df["close"] < df["bc"]:
         return False
     if support == df["bc"] and resistance == df["tc"]:
         return False
@@ -34,7 +36,7 @@ def calculate_buy_signal(df: DataFrame) -> bool:
     treshold = (resistance - support) * 0.10
     green_candle = df["close"] > df["open"]
     body_70_percent = df["open"] + 0.70 * (df["close"] - df["open"])
-    body_50_percent = (df["open"] + df["high"]) / 2
+    body_50_percent = (df["open"] + df["close"]) / 2
     above_ema = body_50_percent > df["20_ema"]
 
     body_70_percent_above = body_70_percent > support
@@ -53,9 +55,11 @@ def generate_buy_signal(df: DataFrame) -> DataFrame:
 
 
 def calculate_sell_signal(df: DataFrame) -> bool:
-    levels = ["r4", "r3", "r2", "r1", "tc", "bc", "s1", "s2", "s3", "s4"]
+    levels = ["r4", "r3", "r2", "r1", "bc", "tc", "s1", "s2", "s3", "s4"]
     resistance, support = resistance_support_red_candle(levels, df)
     if df["low"] < resistance - ((resistance - support) / 4):
+        return False
+    if df["close"] > df["bc"] and df["close"] < df["tc"]:
         return False
     if support == df["bc"] and resistance == df["tc"]:
         return False
@@ -66,7 +70,7 @@ def calculate_sell_signal(df: DataFrame) -> bool:
     treshold = (resistance - support) * 0.10
     red_candle = df["open"] > df["close"]
     body_70_percent = df["open"] + 0.70 * (df["close"] - df["open"])
-    body_50_percent = (df["open"] + df["high"]) / 2
+    body_50_percent = (df["open"] + df["close"]) / 2
     below_ema = body_50_percent < df["20_ema"]
 
     body_70_percent_below = body_70_percent < resistance
