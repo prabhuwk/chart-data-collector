@@ -35,7 +35,7 @@ def convert_to_date_time(df: DataFrame) -> DataFrame:
 
 def intraday_data(chart_data: DhanCandlestickData, security_id: str) -> DataFrame:
     logger.info("getting todays data")
-    minute_chart = chart_data.intraday(security_id=f"{security_id}")
+    minute_chart = chart_data.intraday(security_id=security_id)
     df = pd.DataFrame(data=minute_chart["data"])
     return convert_to_date_time(df=df)
 
