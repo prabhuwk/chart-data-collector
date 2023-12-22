@@ -1,3 +1,5 @@
+from typing import List
+
 from pandas.core.frame import DataFrame
 from utils import push_to_redis_queue
 
@@ -20,14 +22,35 @@ def resistance_support_red_candle(levels: list, df: DataFrame):
     return False, False
 
 
+def pivot_point_top_and_bottom_buy(df: DataFrame) -> List[str]:
+    if df["bc"] < df["tc"]:
+        return ["bc", "tc"]
+    return ["tc", "bc"]
+
+
+def pivot_point_top_and_bottom_sell(df: DataFrame) -> List[str]:
+    if df["tc"] > df["bc"]:
+        return ["tc", "bc"]
+    return ["bc", "tc"]
+
+
+def merge_levels(levels: List[str], pivot_levels: List[str]):
+    result = []
+    for index, value in enumerate(levels):
+        if index == 4:
+            result.extend(pivot_levels)
+        result.append(value)
+    return result
+
+
 def calculate_buy_signal(df: DataFrame) -> bool:
-    levels = ["s4", "s3", "s2", "s1", "tc", "bc", "r1", "r2", "r3", "r4"]
+    pivot_levels = pivot_point_top_and_bottom_buy(df)
+    levels = ["s4", "s3", "s2", "s1", "r1", "r2", "r3", "r4"]
+    levels = merge_levels(levels, pivot_levels)
     support, resistance = support_resistance_green_candle(levels, df)
     if df["high"] > support + ((resistance - support) / 4):
         return False
-    if df["close"] > df["tc"] and df["close"] < df["bc"]:
-        return False
-    if support == df["bc"] and resistance == df["tc"]:
+    if df[pivot_levels[0]] > df["close"] > df[pivot_levels[1]]:
         return False
     if not (support and resistance):
         return False
@@ -44,7 +67,7 @@ def calculate_buy_signal(df: DataFrame) -> bool:
     near_open = -treshold < abs(df["open"] - support) < treshold
 
     if green_candle and above_ema and near_open and body_70_percent_above:
-        push_to_redis_queue("BUY", df.to_json())
+        push_to_redis_queue("BUY", df.to_json(orient="index", date_format="iso"))
         return True
     return False
 
@@ -55,13 +78,13 @@ def generate_buy_signal(df: DataFrame) -> DataFrame:
 
 
 def calculate_sell_signal(df: DataFrame) -> bool:
-    levels = ["r4", "r3", "r2", "r1", "bc", "tc", "s1", "s2", "s3", "s4"]
+    pivot_levels = pivot_point_top_and_bottom_sell(df)
+    levels = ["r4", "r3", "r2", "r1", "s1", "s2", "s3", "s4"]
+    levels = merge_levels(levels, pivot_levels)
     resistance, support = resistance_support_red_candle(levels, df)
     if df["low"] < resistance - ((resistance - support) / 4):
         return False
-    if df["close"] > df["bc"] and df["close"] < df["tc"]:
-        return False
-    if support == df["bc"] and resistance == df["tc"]:
+    if df[pivot_levels[0]] < df["close"] < df[pivot_levels[1]]:
         return False
     if not (support and resistance):
         return False
@@ -78,7 +101,7 @@ def calculate_sell_signal(df: DataFrame) -> bool:
     near_open = -treshold < abs(df["open"] - resistance) < treshold
 
     if red_candle and below_ema and near_open and body_70_percent_below:
-        push_to_redis_queue("SELL", df.to_json())
+        push_to_redis_queue("SELL", df.to_json(orient="index", date_format="iso"))
         return True
     return False
 
