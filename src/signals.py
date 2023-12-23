@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 from pandas.core.frame import DataFrame
@@ -67,7 +68,12 @@ def calculate_buy_signal(df: DataFrame) -> bool:
     near_open = -treshold < abs(df["open"] - support) < treshold
 
     if green_candle and above_ema and near_open and body_70_percent_above:
-        push_to_redis_queue("BUY", df.to_json(orient="index", date_format="iso"))
+        json_data = df.to_json(orient="index", date_format="iso")
+        data = json.loads(json_data)
+        data["support"] = support
+        data["resistance"] = resistance
+        modified_json_data = json.dumps(data)
+        push_to_redis_queue("BUY", modified_json_data)
         return True
     return False
 
@@ -101,7 +107,12 @@ def calculate_sell_signal(df: DataFrame) -> bool:
     near_open = -treshold < abs(df["open"] - resistance) < treshold
 
     if red_candle and below_ema and near_open and body_70_percent_below:
-        push_to_redis_queue("SELL", df.to_json(orient="index", date_format="iso"))
+        json_data = df.to_json(orient="index", date_format="iso")
+        data = json.loads(json_data)
+        data["support"] = support
+        data["resistance"] = resistance
+        modified_json_data = json.dumps(data)
+        push_to_redis_queue("SELL", modified_json_data)
         return True
     return False
 
