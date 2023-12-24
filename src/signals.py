@@ -44,6 +44,15 @@ def merge_levels(levels: List[str], pivot_levels: List[str]):
     return result
 
 
+def signal_json_data(df: DataFrame, support: float, resistance: float) -> json:
+    json_data = df.to_json(orient="index", date_format="iso")
+    data = json.loads(json_data)
+    data["timestamp"] = df.name.strftime("%Y-%m-%d %H:%M:%S")
+    data["support"] = support
+    data["resistance"] = resistance
+    return json.dumps(data)
+
+
 def calculate_buy_signal(df: DataFrame) -> bool:
     pivot_levels = pivot_point_top_and_bottom_buy(df)
     levels = ["s4", "s3", "s2", "s1", "r1", "r2", "r3", "r4"]
@@ -68,12 +77,8 @@ def calculate_buy_signal(df: DataFrame) -> bool:
     near_open = -treshold < abs(df["open"] - support) < treshold
 
     if green_candle and above_ema and near_open and body_70_percent_above:
-        json_data = df.to_json(orient="index", date_format="iso")
-        data = json.loads(json_data)
-        data["support"] = support
-        data["resistance"] = resistance
-        modified_json_data = json.dumps(data)
-        push_to_redis_queue("BUY", modified_json_data)
+        json_data = signal_json_data(df, support, resistance)
+        push_to_redis_queue("BUY", json_data)
         return True
     return False
 
@@ -107,12 +112,8 @@ def calculate_sell_signal(df: DataFrame) -> bool:
     near_open = -treshold < abs(df["open"] - resistance) < treshold
 
     if red_candle and below_ema and near_open and body_70_percent_below:
-        json_data = df.to_json(orient="index", date_format="iso")
-        data = json.loads(json_data)
-        data["support"] = support
-        data["resistance"] = resistance
-        modified_json_data = json.dumps(data)
-        push_to_redis_queue("SELL", modified_json_data)
+        json_data = signal_json_data(df, support, resistance)
+        push_to_redis_queue("SELL", json_data)
         return True
     return False
 
