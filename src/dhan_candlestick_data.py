@@ -52,7 +52,7 @@ def previous_day_data(chart_data: DhanCandlestickData, symbol_name: str) -> dict
     if today.weekday() == 0:
         yesterday = datetime.today() - timedelta(days=3)
     else:
-        yesterday = datetime.today() - timedelta(days=1)
+        yesterday = datetime.today() - timedelta(days=4)
     yesterday_date = yesterday.date().strftime("%Y-%m-%d")
     today_date = datetime.today().date().strftime("%Y-%m-%d")
     minute_chart = chart_data.historical(
