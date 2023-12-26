@@ -1,6 +1,6 @@
-import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 
+import click
 from market_status import MarketStatus
 
 
@@ -10,14 +10,6 @@ class PostTradingHoursError(Exception):
 
 class DhanDataNotFoundError(Exception):
     """Dhan Data Not Found Error"""
-
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(filename)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
 
 
 class DhanCandlestickData:
@@ -46,14 +38,10 @@ class DhanCandlestickData:
         )
 
 
-def previous_day_data(chart_data: DhanCandlestickData, symbol_name: str) -> dict:
-    logger.info("getting previous day data")
-    today = datetime.now()
-    if today.weekday() == 0:
-        yesterday = datetime.today() - timedelta(days=3)
-    else:
-        yesterday = datetime.today() - timedelta(days=1)
-    yesterday_date = yesterday.date().strftime("%Y-%m-%d")
+def previous_day_data(
+    chart_data: DhanCandlestickData, symbol_name: str, yesterday_date: str
+) -> dict:
+    click.secho("getting previous day data")
     today_date = datetime.today().date().strftime("%Y-%m-%d")
     minute_chart = chart_data.historical(
         symbol=symbol_name, from_date=yesterday_date, to_date=today_date

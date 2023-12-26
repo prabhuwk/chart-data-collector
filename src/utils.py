@@ -2,6 +2,7 @@ import json
 import os
 
 import redis
+import yaml
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from dhanhq import dhanhq
@@ -44,3 +45,8 @@ def get_redis_client():
 def push_to_redis_queue(channel: str, data: json):
     redis_client = get_redis_client()
     redis_client.rpush(channel, data)
+
+
+def read_yaml_file(filename):
+    with open(filename) as file:
+        return yaml.safe_load(file)
