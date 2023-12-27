@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 import redis
@@ -7,6 +8,12 @@ from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from dhanhq import dhanhq
 from dotenv import load_dotenv
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 class ClientIdAccessTokenNotFoundError(Exception):
@@ -44,6 +51,8 @@ def get_redis_client():
 
 def push_to_redis_queue(channel: str, data: json):
     redis_client = get_redis_client()
+    logger.info(f"{channel} signal is generated.")
+    logger.info(f"{data}")
     redis_client.rpush(channel, data)
 
 
