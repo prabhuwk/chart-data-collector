@@ -1,14 +1,20 @@
+import os
 import time
 from datetime import datetime
 from pathlib import Path
 
 import click
+import debugpy
 from dhan_candlestick_data import DhanCandlestickData, previous_day_data
 from indicators import calculate_cpr
 from process import process_intraday_data
 from symbol_id import SymbolId
 from utils import get_dhan_client
 from working_yesterday import WorkingYesterday
+
+if os.environ.get("DEBUG") == "True":
+    debugpy.listen(5678)
+    debugpy.wait_for_client()
 
 
 @click.command()
