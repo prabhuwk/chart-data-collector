@@ -13,7 +13,7 @@ from utils import get_dhan_client
 from working_yesterday import WorkingYesterday
 
 if os.environ.get("DEBUG") == "True":
-    debugpy.listen(5678)
+    debugpy.listen("0.0.0.0", 5678)
     debugpy.wait_for_client()
 
 
